@@ -1,0 +1,38 @@
+pipeline{
+    agent any
+    stages{
+       
+        stage('create-tar-file')
+        {
+            steps{
+                sh 'tar -czvf audi.tar.gz *'
+            }
+        }
+        stage('move tarfile')
+        {
+            steps{
+                sh 'mv audi.tar.gz ..'
+            }
+        }
+        
+        stage('build')
+        {
+           steps{
+                sh 'docker build -t audi:v1 .'
+            } 
+        }
+        stage('run')
+        {
+            steps{
+                sh 'docker run -d --name faraz_cont -p 80:80 audi:v1'
+            }
+        }
+         stage('deploy')
+        {
+            steps{
+                sh 'cp -r * /var/www/html'
+            }
+        }
+        
+    }
+}
